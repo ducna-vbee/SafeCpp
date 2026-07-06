@@ -17,24 +17,5 @@
 ///		To obtain a commercial license, please contact me via email: workofduc@gmail.com [cite: 23]
 /// </remarks>
 
-#pragma once
-
-/** Inclusion(s) of C++ standard library header file(s).**/
-#include <string>
-
 /** Inclusion(s) of project's C++ header file(s).**/
-#include "SafeNamespace.h"
-
-
-/** Main code.**/
-
-/// <summary>
-///		C++ namespace: `Safe`.
-/// </summary>
-namespace Safe
-{
-	/// <summary>
-	///		C++ type name alias: `Safe`.
-	/// </summary>
-	using Safe = SafeContextBase;
-};
+#include "SafeFunction.h"

@@ -1,0 +1,560 @@
+/// <summary>
+///		Legal & Licensing Information
+/// </summary>
+/// <remarks>
+///		Required Notice: Copyright © 2026, Nguyễn Anh Đức (workofduc@gmail.com). All Rights Reserved. [cite: 6, 7]
+///		This software is licensed under the PolyForm Noncommercial License 1.0.0. [cite: 1]
+/// 
+///		PERMITTED USE:
+///		Any noncommercial purpose is a permitted purpose. [cite: 9]
+///		Personal use for research, hobby projects, or personal study is permitted. [cite: 9]
+/// 
+///		DISTRIBUTION:
+///		Redistribution is permitted only under the terms of the PolyForm Noncommercial License. [cite: 3, 4, 5]
+/// 
+///		COMMERCIAL USE:
+///		Commercial use is NOT permitted under these terms. 
+///		To obtain a commercial license, please contact me via email: workofduc@gmail.com [cite: 23]
+/// </remarks>
+
+/** Inclusion(s) of C++ standard library header file(s).**/
+#include <atomic>
+#include <chrono>
+#include <cstdlib>
+#include <functional>
+#include <iostream>
+#include <random>
+#include <string>
+#include <thread>
+#include <utility>
+#include <vector>
+
+/** Inclusion(s) of project's C++ header file(s).**/
+#include "SafeContextBase.h"
+#include "SafeEvent.h"
+#include "SafeMemoryChunk.h"
+#include "SafeNamespace.h"
+#include "SafeString.h"
+#include "SafeTrade.h"
+
+/** Inclusion(s) of the standard C++ namespace(s).**/
+using namespace std;
+
+
+/** Main code.**/
+
+/// <summary>
+///		C++ namespace: `Safe`.
+/// </summary>
+namespace Safe
+{
+	
+};
+
+
+/** Test cases.**/
+
+/// <summary>
+///		C++ class: `Example`.
+/// </summary>
+/*class Example safe
+{
+private:
+	size_t id;
+
+public:
+	Example()
+	{
+		this->id = 0;
+	};
+	Example(const size_t& id)
+	{
+		this->id = id;
+	};
+	Example(const Example& other) noexcept
+	{
+		this->id = other.id;
+	};
+	Example(Example&& other) noexcept
+	{
+		this->id = move(other.id);
+	};
+	~Example() override = default;
+
+
+	Example& operator=(const Example& other) noexcept
+	{
+		this->id = other.id;
+
+		return *this;
+	};
+
+	Example& operator=(Example&& other) noexcept
+	{
+		this->id = move(other.id);
+
+		return *this;
+	};
+
+	size_t getID() const noexcept
+	{
+		return this->id;
+	};
+
+	void setID(const size_t& id) noexcept
+	{
+		this->id = id;
+	};
+
+	void setID(size_t&& id) noexcept
+	{
+		this->id = move(id);
+	};
+
+	static Example& getRandomReference()
+	{
+		int randomNumber = rand() % 100;
+		Example* localInstancePointer = ::new Example(randomNumber);
+
+		return *localInstancePointer;
+	};
+
+	static Example* allocateChunkManually(const size_t& cardinality)
+	{
+		Example* chunkPointer = static_cast<Example*>(::operator new(sizeof(Example) * cardinality));
+		size_t i = 0;
+
+		for (i = 0;i < cardinality;i++)
+		{
+			//::new (&(chunkPointer[i])) Example(); //Impossible.
+			::new (chunkPointer + i) Example(); //Definitely crashes the program in the end.
+		}
+
+		return chunkPointer;
+	};
+};*/
+
+/*#ifdef WINDOWS_VISUAL_CPP
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#endif
+int main()
+{
+#ifdef WINDOWS_VISUAL_CPP
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_CrtSetReportMode(_CRT_WARN,_CRTDBG_MODE_DEBUG);
+#endif
+
+	Example* pointer = ::new Example();
+	Example* anotherPointer = ::new Example();
+	Example* pointerAlias = pointer;
+	cout << pointer->getID() << endl;
+	Safe::SafeContextBase::recycle(dynamic_cast<Safe::SafeContextBase*>(pointer));
+	Example& repurposedReference = Safe::SafeContextBase::repurpose<Example>();
+	cout << (repurposedReference.getTypeInfo()).name() << endl;
+	cout << pointer->getID() << endl;
+
+	return 0;
+};*/
+
+/*#ifdef WINDOWS_VISUAL_CPP
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#endif
+int main()
+{
+#ifdef WINDOWS_VISUAL_CPP
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_CrtSetReportMode(_CRT_WARN,_CRTDBG_MODE_DEBUG);
+#endif
+
+	Example* chunkPointer = static_cast<Example*>(::operator new(sizeof(Example) * 100));
+	::delete chunkPointer; // Compilation error if compiled using Visual C++.
+	//::delete static_cast<void*>(chunkPointer); //Unsafe, not good for any pointer that is managed.
+
+	return 0;
+};*/
+
+/*#ifdef WINDOWS_VISUAL_CPP
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#endif
+int main()
+{
+#ifdef WINDOWS_VISUAL_CPP
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_CrtSetReportMode(_CRT_WARN,_CRTDBG_MODE_DEBUG);
+#endif
+
+	Example* arrayPointer = static_cast<Example*>(::operator new[](sizeof(Example) * 100));
+	::delete[] arrayPointer; // Compilation error if compiled using Visual C++.
+	//::delete[] static_cast<void*>(arrayPointer); //Unsafe, not good for any pointer that is managed.
+
+	return 0;
+};*/
+
+/*#ifdef WINDOWS_VISUAL_CPP
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#endif
+int main()
+{
+#ifdef WINDOWS_VISUAL_CPP
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_CrtSetReportMode(_CRT_WARN,_CRTDBG_MODE_DEBUG);
+#endif
+
+	Safe::SafeMemoryChunk<Example>* chunkPointer = ::new Safe::SafeMemoryChunk<Example>(100);
+	Safe::SafeContextBase::recycle(static_cast<Safe::SafeContextBase*>(chunkPointer));
+	Safe::SafeMemoryChunk<Example>& repurposedChunkReference = Safe::SafeContextBase::repurpose<Safe::SafeMemoryChunk<Example>>();
+	cout << repurposedChunkReference.getCardinality() << endl;
+
+	return 0;
+};*/
+
+/*#ifdef WINDOWS_VISUAL_CPP
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#endif
+int main()
+{
+#ifdef WINDOWS_VISUAL_CPP
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_CrtSetReportMode(_CRT_WARN,_CRTDBG_MODE_DEBUG);
+#endif
+
+	Safe::SafeContextBase::SafeMemoryChunk<Example>& chunkReference = Safe::SafeContextBase::createDerivedChunkOnMemoryHeap<Example>(10);
+	(chunkReference[9]).setID(100);
+	cout << (chunkReference[9]).getID() << endl;
+	chunkReference.dispose();
+	Example& reference = chunkReference[9]; //Still valid.
+	cout << reference.getID() << endl;
+	const Example& constantReference = chunkReference[9]; //Still valid.
+
+	return 0;
+};*/
+
+/*#ifdef WINDOWS_VISUAL_CPP
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#endif
+int main()
+{
+#ifdef WINDOWS_VISUAL_CPP
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_CrtSetReportMode(_CRT_WARN,_CRTDBG_MODE_DEBUG);
+#endif
+
+	const int threadCount = 8;
+	const int perThread = 200;
+	size_t j = 0;
+	atomic<int> numberOfAllocations{ 0 };
+	atomic<int> numberOfRecycles{ 0 };
+	atomic<int> numberOfRepurposes{ 0 };
+	vector<thread> threads = vector<thread>();
+
+	for (j = 0;j < threadCount;++j)
+	{
+		threads.emplace_back([j,perThread,&numberOfAllocations,&numberOfRecycles,&numberOfRepurposes]()
+		{
+			Safe::SafeMemoryChunk<Example>* chunkPointer = ::new Safe::SafeMemoryChunk<Example>(100);
+			vector<Example*> instancePointers = vector<Example*>();
+			instancePointers.reserve(perThread);
+			size_t i = 0;
+
+			for (i = 0;i < perThread;i++)
+			{
+				Example* instancePointer = ::new Example();
+				numberOfAllocations++;
+				instancePointers.push_back(instancePointer);
+			}
+
+			for (i = 0;i < perThread / 2;i++)
+			{
+				Example*& pointerReference = instancePointers[i];
+				Safe::SafeContextBase* polymorphicPointer = dynamic_cast<Safe::SafeContextBase*>(pointerReference);
+				Safe::SafeContextBase::recycle(polymorphicPointer);
+
+				if (pointerReference == nullptr)
+				{
+					numberOfRecycles++;
+				}
+			}
+
+			for (i = 0;i < perThread / 2;i++)
+			{
+				try
+				{
+					Example& repurposedReference = Safe::SafeContextBase::repurpose<Example>();
+					repurposedReference.setID(j * 10000 + i);
+					numberOfRepurposes++;
+				}
+				catch (...)
+				{
+
+				}
+			}
+
+			this_thread::sleep_for(chrono::milliseconds(10));
+
+			for (i = perThread / 2;i < instancePointers.size();i++)
+			{
+				Example*& pointerReference = instancePointers[i];
+				Safe::SafeContextBase* polymorphicPointer = dynamic_cast<Safe::SafeContextBase*>(pointerReference);
+
+				if (pointerReference != nullptr)
+				{
+					Safe::SafeContextBase::recycle(polymorphicPointer);
+
+					if (polymorphicPointer == nullptr)
+					{
+						numberOfRecycles++;
+					}
+				}
+			}
+		});
+	}
+
+	for (thread& thread : threads)
+	{
+		thread.join();
+	}
+
+	cout << "Number of allocations: `" << numberOfAllocations.load() << "`, recycles: `" << numberOfRecycles.load() << "` and repurposes: `" << numberOfRepurposes.load() << "`." << endl;
+
+	return 0;
+};*/
+
+/*#ifdef WINDOWS_VISUAL_CPP
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#endif
+int main()
+{
+#ifdef WINDOWS_VISUAL_CPP
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_CrtSetReportMode(_CRT_WARN,_CRTDBG_MODE_DEBUG);
+#endif
+
+	Example& reference = Example::getRandomReference();
+	cout << "ID: " << reference.getID() << endl;
+
+	return 0;
+};*/
+
+/*#ifdef WINDOWS_VISUAL_CPP
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#endif
+int main()
+{
+#ifdef WINDOWS_VISUAL_CPP
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_CrtSetReportMode(_CRT_WARN,_CRTDBG_MODE_DEBUG);
+#endif
+
+	class NumericEvent final : Safe::SafeEvent
+	{
+	private:
+		size_t number;
+
+	public:
+		explicit NumericEvent() noexcept
+		{
+			this->number = 0;
+		};
+		explicit NumericEvent(const size_t& number) noexcept
+		{
+			this->number = number;
+		};
+		NumericEvent(const NumericEvent& other) noexcept
+		{
+			this->number = other.number;
+		};
+		NumericEvent(NumericEvent&& other) noexcept
+		{
+			this->number = move(other.number);
+		};
+		~NumericEvent() = default;
+
+
+		NumericEvent& operator=(const NumericEvent& other) noexcept
+		{
+			this->number = other.number;
+
+			return *this;
+		};
+
+		NumericEvent& operator=(NumericEvent&& other) noexcept
+		{
+			this->number = move(other.number);
+
+			return *this;
+		};
+
+		static size_t generateRandomNumber(const size_t& minimum,const size_t& maximum)
+		{
+			size_t randomSeeder = chrono::system_clock::now().time_since_epoch().count();
+			mt19937_64 randomGenerator(randomSeeder);
+			uniform_int_distribution<size_t> distribution(minimum,maximum);
+
+			return distribution(randomGenerator);
+		};
+
+		size_t getNumber() const noexcept
+		{
+			return this->number;
+		};
+
+		void setNumber(const size_t& number) noexcept
+		{
+			this->number = number;
+		};
+
+		void incrementNumber()
+		{
+			this->number++;
+		};
+
+		void decrementNumber()
+		{
+			this->number--;
+		};
+	};
+
+
+	NumericEvent* eventPointerA = ::new NumericEvent();
+	NumericEvent* eventPointerB = ::new NumericEvent();
+	size_t limit = 4;
+
+	while (eventPointerB->getNumber() < limit)
+	{
+		eventPointerA->incrementNumber();
+
+		if (eventPointerA->getNumber() % 2 == 0)
+		{
+			eventPointerA->decrementNumber();
+		}
+		else
+		{
+			if (NumericEvent::generateRandomNumber(1,100) % 2 == 0)
+			{
+				eventPointerA->incrementNumber();
+				eventPointerB->setNumber(eventPointerA->getNumber());
+			}
+		}
+
+		cout << "Event A: " << eventPointerA->getNumber() << endl;
+		cout << "Event B: " << eventPointerB->getNumber() << endl;
+	}
+};*/
+
+/*#ifdef WINDOWS_VISUAL_CPP
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#endif
+int main()
+{
+#ifdef WINDOWS_VISUAL_CPP
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_CrtSetReportMode(_CRT_WARN,_CRTDBG_MODE_DEBUG);
+#endif
+
+	class ClickEvent : public Safe::SafeEvent
+	{
+	public:
+		double x;
+		double y;
+
+
+		ClickEvent(const double& x,const double& y,const Safe::SafeEvent::SafeEventOccurrence& occurrence) : x(x),y(y),Safe::SafeEvent(occurrence)
+		{
+
+		};
+
+		~ClickEvent() = default;
+	};
+
+	class MoveEvent : public Safe::SafeEvent
+	{
+	public:
+		double x;
+		double y;
+
+
+		MoveEvent(double x,double y) : x(x),y(y),Safe::SafeEvent()
+		{
+			
+		};
+
+		~MoveEvent() = default;
+	};
+
+	class ClickableOpacity final : public Safe::SafeContextBase
+	{
+	public:
+		Safe::SafeEventHandler<ClickEvent> onClick;
+		Safe::SafeEventHandler<MoveEvent> onMove;
+
+
+		ClickableOpacity() : Safe::SafeContextBase()
+		{
+			this->onClick = *(::new Safe::SafeEventHandler<ClickEvent>());
+			this->onMove = *(::new Safe::SafeEventHandler<MoveEvent>());
+		};
+
+		virtual ~ClickableOpacity() override = default;
+
+
+		void handleClick(const ClickEvent& clickEvent)
+		{
+			(this->onClick).handle(clickEvent);
+		};
+	};
+
+	ClickableOpacity* buttonPointer = ::new ClickableOpacity();
+	buttonPointer->onClick = [](const ClickEvent& event)
+	{
+		cout << "Mouse moved to coordinates: (" << event.x << "," << event.y << ")." << endl;
+	};
+
+	ClickEvent* eventPointer = ::new ClickEvent(0,0,[&eventPointer,&buttonPointer]() noexcept -> void
+	{
+		POINT mousePoint;
+
+		if (GetCursorPos(&mousePoint) && ((eventPointer->x != mousePoint.x) || (eventPointer->y != mousePoint.y)))
+		{
+			eventPointer->x = mousePoint.x;
+			eventPointer->y = mousePoint.y;
+			buttonPointer->handleClick(*eventPointer);
+		}
+
+		if ((mousePoint.x == 0) && (mousePoint.y == 0))
+		{
+			eventPointer->cancel();
+		}
+	});
+	
+	eventPointer->broadcast();
+
+	return 0;
+};*/
+
+/*#ifdef WINDOWS_VISUAL_CPP
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#endif
+int main()
+{
+#ifdef WINDOWS_VISUAL_CPP
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_CrtSetReportMode(_CRT_WARN,_CRTDBG_MODE_DEBUG);
+#endif
+	Safe::SafeString<char>* stringPointer = ::new Safe::SafeString("abcdef");
+	Safe::SafeString<char> string = "abcdef";
+	Safe::SafeStringBuilder<char> stringBuilder = Safe::SafeStringBuilder<char>(string);
+	stringBuilder.append("abcdef");
+	cout << stringBuilder.getLength() << endl;
+
+	return 0;
+};*/

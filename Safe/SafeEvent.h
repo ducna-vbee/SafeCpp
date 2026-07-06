@@ -2,18 +2,18 @@
 ///		Legal & Licensing Information
 /// </summary>
 /// <remarks>
-///		Required Notice: Copyright@2026 Duc Nguyen (workofduc@gmail.com) [cite: 6, 7]
+///		Required Notice: Copyright © 2026, Nguyễn Anh Đức (workofduc@gmail.com). All Rights Reserved. [cite: 6, 7]
 ///		This software is licensed under the PolyForm Noncommercial License 1.0.0. [cite: 1]
-/// 
+///
 ///		PERMITTED USE:
 ///		Any noncommercial purpose is a permitted purpose. [cite: 9]
 ///		Personal use for research, hobby projects, or personal study is permitted. [cite: 9]
-/// 
+///
 ///		DISTRIBUTION:
 ///		Redistribution is permitted only under the terms of the PolyForm Noncommercial License. [cite: 3, 4, 5]
-/// 
+///
 ///		COMMERCIAL USE:
-///		Commercial use is NOT permitted under these terms. 
+///		Commercial use is NOT permitted under these terms.
 ///		To obtain a commercial license, please contact me via email: workofduc@gmail.com [cite: 23]
 /// </remarks>
 
@@ -285,8 +285,11 @@ namespace Safe
 		/// <returns>SafeEventHandler&lt;GenericTypeOfSafeEvent&gt;&amp;</returns>
 		inline SafeEventHandler<GenericTypeOfSafeEvent>& operator=(const SafeEventHandler<GenericTypeOfSafeEvent>& other)
 		{
-			SafeContextBase::operator=(static_cast<const SafeContextBase&>(other));
-			this->composedHandle = other.composedHandle;
+			if (this != &other)
+			{
+				SafeContextBase::operator=(static_cast<const SafeContextBase&>(other));
+				this->composedHandle = other.composedHandle;
+			}
 
 			return *this;
 		};
@@ -301,8 +304,11 @@ namespace Safe
 		/// <returns>SafeEventHandler&lt;GenericTypeOfSafeEvent&gt;&amp;</returns>
 		inline SafeEventHandler<GenericTypeOfSafeEvent>& operator=(SafeEventHandler<GenericTypeOfSafeEvent>&& other) noexcept(false)
 		{
-			SafeContextBase::operator=(static_cast<SafeContextBase&&>(other));
-			this->composedHandle = static_cast<std::function<void(const GenericTypeOfSafeEvent&)>&&>(other.composedHandle);
+			if (this != static_cast<const SafeEventHandler<GenericTypeOfSafeEvent>&>(other))
+			{
+				SafeContextBase::operator=(static_cast<SafeContextBase&&>(other));
+				this->composedHandle = static_cast<std::function<void(const GenericTypeOfSafeEvent&)>&&>(other.composedHandle);
+			}
 
 			return *this;
 		};

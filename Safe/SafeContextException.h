@@ -2,7 +2,7 @@
 ///		Legal & Licensing Information
 /// </summary>
 /// <remarks>
-///		Required Notice: Copyright@2026 Duc Nguyen (workofduc@gmail.com) [cite: 6, 7]
+///		Required Notice: Copyright © 2026, Nguyễn Anh Đức (workofduc@gmail.com). All Rights Reserved. [cite: 6, 7]
 ///		This software is licensed under the PolyForm Noncommercial License 1.0.0. [cite: 1]
 /// 
 ///		PERMITTED USE:

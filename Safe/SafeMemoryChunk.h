@@ -2,18 +2,18 @@
 ///		Legal & Licensing Information
 /// </summary>
 /// <remarks>
-///		Required Notice: Copyright@2026 Duc Nguyen (workofduc@gmail.com) [cite: 6, 7]
+///		Required Notice: Copyright © 2026, Nguyễn Anh Đức (workofduc@gmail.com). All Rights Reserved. [cite: 6, 7]
 ///		This software is licensed under the PolyForm Noncommercial License 1.0.0. [cite: 1]
-/// 
+///
 ///		PERMITTED USE:
 ///		Any noncommercial purpose is a permitted purpose. [cite: 9]
 ///		Personal use for research, hobby projects, or personal study is permitted. [cite: 9]
-/// 
+///
 ///		DISTRIBUTION:
 ///		Redistribution is permitted only under the terms of the PolyForm Noncommercial License. [cite: 3, 4, 5]
-/// 
+///
 ///		COMMERCIAL USE:
-///		Commercial use is NOT permitted under these terms. 
+///		Commercial use is NOT permitted under these terms.
 ///		To obtain a commercial license, please contact me via email: workofduc@gmail.com [cite: 23]
 /// </remarks>
 
@@ -22,7 +22,6 @@
 /** Inclusion(s) of C++ standard library header file(s).**/
 #include <string>
 #include <type_traits>
-#include <typeinfo>
 #include <vector>
 
 /** Inclusion(s) of project's C++ header file(s).**/
@@ -41,7 +40,7 @@ namespace Safe
 	///		C++ class template: `SafeMemoryChunk`.
 	/// </summary>
 	/// <typeparam name="GenericTypeOfSafeContextDerivative"></typeparam>
-	template<typename GenericTypeOfSafeContextDerivative> class SafeContextBase::SafeMemoryChunk final : public SafeContextBase
+	template<typename GenericTypeOfSafeContextDerivative> requires std::equality_comparable<GenericTypeOfSafeContextDerivative> class SafeContextBase::SafeMemoryChunk final : public SafeContextBase
 	{
 	private:
 		GenericTypeOfSafeContextDerivative* composedBufferPointer;
@@ -51,12 +50,12 @@ namespace Safe
 
 	public:
 		static_assert((std::is_base_of<SafeContextBase,GenericTypeOfSafeContextDerivative>::value == true),"`GenericTypeOfSafeContextDerivative` must be a type inherited from `SafeContextBase`!");
+		static_assert((std::is_pointer<GenericTypeOfSafeContextDerivative>::value == false),"`GenericTypeOfSafeContextDerivative` can't be a pointer type!");
 		static_assert((std::is_default_constructible<GenericTypeOfSafeContextDerivative>::value == true),"`GenericTypeOfSafeContextDerivative` must be a type having a default constructor!");
 		static_assert((std::is_copy_constructible<GenericTypeOfSafeContextDerivative>::value == true),"`GenericTypeOfSafeContextDerivative` must be a type having a copy constructor!");
 		static_assert((std::is_move_constructible<GenericTypeOfSafeContextDerivative>::value == true),"`GenericTypeOfSafeContextDerivative` must be a type having a move constructor!");
 		static_assert((std::is_copy_assignable<GenericTypeOfSafeContextDerivative>::value == true),"`GenericTypeOfSafeContextDerivative` must be a type having a copy assignment operator!");
 		static_assert((std::is_move_assignable<GenericTypeOfSafeContextDerivative>::value == true),"`GenericTypeOfSafeContextDerivative` must be a type having a move assignment operator!");
-		static_assert((std::is_pointer<GenericTypeOfSafeContextDerivative>::value == false),"`GenericTypeOfSafeContextDerivative` can't be a pointer type!");
 
 
 		/// <summary>
@@ -116,12 +115,12 @@ namespace Safe
 		/// <summary>
 		///		Copy constructor of `SafeMemoryChunk`.
 		/// </summary>
-		inline SafeMemoryChunk(const SafeMemoryChunk&) = delete;
+		inline SafeMemoryChunk(const SafeMemoryChunk<GenericTypeOfSafeContextDerivative>&) = delete;
 
 		/// <summary>
 		///		Move constructor of `SafeMemoryChunk`.
 		/// </summary>
-		inline SafeMemoryChunk(SafeMemoryChunk&&) = delete;
+		inline SafeMemoryChunk(SafeMemoryChunk<GenericTypeOfSafeContextDerivative>&&) = delete;
 
 	public:
 		/// <summary>
@@ -140,7 +139,7 @@ namespace Safe
 				}
 
 				SafeContextBase::destroyDerivedChunkOnMemoryHeap(chunkBufferElementPointers,this->cardinality,this->constantPointerMasks,this->variablePointerMasks);
-				::delete(static_cast<void*>(this->composedBufferPointer));
+				::operator delete(this->composedBufferPointer);
 				this->composedBufferPointer = nullptr;
 			}
 		};
@@ -151,16 +150,16 @@ namespace Safe
 		///		inline
 		///		operator=
 		/// </summary>
-		/// <returns>GenericTypeOfSafeContextDerivative&amp;</returns>
-		inline GenericTypeOfSafeContextDerivative& operator=(const GenericTypeOfSafeContextDerivative&) = delete;
+		/// <returns>SafeMemoryChunk&lt;GenericTypeOfSafeContextDerivative&gt;&amp;</returns>
+		inline SafeMemoryChunk<GenericTypeOfSafeContextDerivative>& operator=(const SafeMemoryChunk<GenericTypeOfSafeContextDerivative>&) = delete;
 
 		/// <summary>
 		///		dynamic
 		///		inline
 		///		operator=
 		/// </summary>
-		/// <returns>GenericTypeOfSafeContextDerivative&amp;</returns>
-		inline GenericTypeOfSafeContextDerivative& operator=(GenericTypeOfSafeContextDerivative&&) = delete;
+		/// <returns>SafeMemoryChunk&lt;GenericTypeOfSafeContextDerivative&gt;&amp;</returns>
+		inline SafeMemoryChunk<GenericTypeOfSafeContextDerivative>& operator=(SafeMemoryChunk<GenericTypeOfSafeContextDerivative>&&) = delete;
 
 	public:
 		/// <summary>
@@ -205,12 +204,40 @@ namespace Safe
 
 		/// <summary>
 		///		dynamic
+		///     inline
 		///		noexcept
 		/// </summary>
 		/// <returns>size_t</returns>
-		std::size_t getCardinality() const noexcept
+		inline std::size_t getCardinality() const noexcept
 		{
 			return this->cardinality;
+		};
+
+		/// <summary>
+		///		dynamic
+		///     inline
+		/// </summary>
+		/// <returns>bool</returns>
+		inline bool contains(const GenericTypeOfSafeContextDerivative& element) const
+		{
+            if (this->composedBufferPointer == nullptr)
+            {
+                return false;
+            }
+            else
+            {
+                std::size_t i = 0;
+
+                for (i = 0;i < this->cardinality;i++)
+                {
+                    if ((this->composedBufferPointer)[i] == element)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
 		};
 
 		/// <summary>
@@ -237,7 +264,7 @@ namespace Safe
 			}
 
 			SafeContextBase::helpDisposeChunk(chunkBufferElementPointers,this->cardinality,this->constantPointerMasks,this->variablePointerMasks,constantProxyInstancePointer,variableProxyInstancePointer);
-			::delete static_cast<void*>(this->composedBufferPointer);
+			::operator delete(this->composedBufferPointer);
 			this->composedBufferPointer = nullptr;
 		};
 	};
