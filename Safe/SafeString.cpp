@@ -2,19 +2,19 @@
 ///		Legal & Licensing Information
 /// </summary>
 /// <remarks>
-///		Required Notice: Copyright © 2026, Nguyễn Anh Đức (workofduc@gmail.com). All Rights Reserved. [cite: 6, 7]
-///		This software is licensed under the PolyForm Noncommercial License 1.0.0. [cite: 1]
+///		Required Notice: Copyright©2026, Nguyễn Anh Đức (workofduc@gmail.com). All Rights Reserved.
 ///
-///		PERMITTED USE:
-///		Any noncommercial purpose is a permitted purpose. [cite: 9]
-///		Personal use for research, hobby projects, or personal study is permitted. [cite: 9]
+///		DUAL-LICENSING MODEL:
+///		This software is dual-licensed to accommodate both open-source development and proprietary commercial use.
 ///
-///		DISTRIBUTION:
-///		Redistribution is permitted only under the terms of the PolyForm Noncommercial License. [cite: 3, 4, 5]
+///		OPEN-SOURCE TRACK (GPLv3):
+///		This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 ///
-///		COMMERCIAL USE:
-///		Commercial use is NOT permitted under these terms.
-///		To obtain a commercial license, please contact me via email: workofduc@gmail.com [cite: 23]
+///		COMMERCIAL TRACK:
+///		For commercial entities wishing to embed this software into proprietary, closed-source software, a separate commercial license is required. This grants the legal right to use the library without being bound by the GPLv3 copyleft requirements.
+///
+///		CONTACT:
+///		For commercial licensing inquiries, pricing, or to obtain a proprietary license agreement, please contact: workofduc@gmail.com
 /// </remarks>
 
 /** Inclusion(s) of C++ standard library header file(s).**/

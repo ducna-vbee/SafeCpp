@@ -1445,10 +1445,9 @@ For detailed semantics, examples and usage patterns see [Guide](Guide.md).
 
 Required Notice: Copyright©2026, Nguyễn Anh Đức (workofduc@gmail.com)
 
-This project is **Source-Available**. It is licensed under the **PolyForm Noncommercial License 1.0.0** with additional terms granting a temporary commercial evaluation period. All Rights Reserved.
+`Safe--Cpp` is dual-licensed to accommodate both open-source development and proprietary commercial use:
 
-* **Non-Commercial Use:** Completely free for personal study, hobby projects, research, and non-commercial organizations.
-* **Commercial Evaluation:** Commercial entities are granted a temporary **7-day exemption** solely for internal evaluation, compilation, and performance testing.
-* **Commercial Production:** A paid commercial production license is required for any commercial application beyond the 7-day trial.
+* **Open-Source Track (GPLv3):** This project is licensed under the **GNU General Public License v3**. It is 100% free and open for personal study, academic research, and open-source projects. In accordance with the GPLv3, any software that integrates this library under this track must also have its full source code made public.
+* **Commercial Track:** For commercial entities wishing to embed `Safe--Cpp` into proprietary, closed-source software, a separate commercial license is required. This grants you the legal right to use the library without being bound by the GPLv3 copyleft requirements.
 
-For commercial licensing inquiries, please contact me via email: **workofduc@gmail.com**.
+For commercial licensing inquiries, pricing, or to obtain a proprietary license agreement, please contact: workofduc@gmail.com.
