@@ -110,11 +110,9 @@ namespace Safe
 		/// </summary>
 		/// <param name="chunkBufferElementPointers"></param>
 		/// <param name="cardinality"></param>
-		/// <param name="constantPointerMasks"></param>
-		/// <param name="variablePointerMasks"></param>
 		/// <param name="constructionInvoker"></param>
 		/// <returns>void</returns>
-		static void helpInitializeChunk(vector<SafeContextBase*>& chunkBufferElementPointers,const size_t& cardinality,const vector<const void*>& constantPointerMasks,const vector<void*>& variablePointerMasks,const DefaultConstructionInvoker& constructionInvoker);
+		static void helpInitializeChunk(vector<SafeContextBase*>& chunkBufferElementPointers,const size_t& cardinality,const DefaultConstructionInvoker& constructionInvoker);
 
 		/// <summary>
 		///		static
@@ -122,33 +120,25 @@ namespace Safe
 		/// <param name="chunkBufferElementPointers"></param>
 		/// <param name="sourceElementPointers"></param>
 		/// <param name="cardinality"></param>
-		/// <param name="constantPointerMasks"></param>
-		/// <param name="variablePointerMasks"></param>
 		/// <param name="constructionInvoker"></param>
 		/// <returns>void</returns>
-		static void helpDuplicateChunk(vector<SafeContextBase*>& chunkBufferElementPointers,const vector<SafeContextBase*>& sourceElementPointers,const size_t& cardinality,const vector<const void*>& constantPointerMasks,const vector<void*>& variablePointerMasks,const CopyConstructionInvoker& constructionInvoker);
+		static void helpDuplicateChunk(vector<SafeContextBase*>& chunkBufferElementPointers,const vector<SafeContextBase*>& sourceElementPointers,const size_t& cardinality,const CopyConstructionInvoker& constructionInvoker);
 
 		/// <summary>
 		///		static
 		/// </summary>
 		/// <param name="chunkBufferElementPointers"></param>
 		/// <param name="cardinality"></param>
-		/// <param name="constantPointerMasks"></param>
-		/// <param name="variablePointerMasks"></param>
 		/// <returns>void</returns>
-		static void helpDestroyChunk(const vector<SafeContextBase*>& chunkBufferElementPointers,const size_t& cardinality,vector<const void*>& constantPointerMasks,vector<void*>& variablePointerMasks);
+		static void helpDestroyChunk(const vector<SafeContextBase*>& chunkBufferElementPointers,const size_t& cardinality);
 
 		/// <summary>
 		///		static
 		/// </summary>
 		/// <param name="chunkBufferElementPointers"></param>
 		/// <param name="cardinality"></param>
-		/// <param name="constantPointerMasks"></param>
-		/// <param name="variablePointerMasks"></param>
-		/// <param name="constantProxyInstancePointer"></param>
-		/// <param name="variableProxyInstancePointer"></param>
 		/// <returns>void</returns>
-		static void helpDisposeChunk(const vector<SafeContextBase*>& chunkBufferElementPointers,const size_t& cardinality,vector<const void*>& constantPointerMasks,vector<void*>& variablePointerMasks,const void* const constantProxyInstancePointer,void* const variableProxyInstancePointer);
+		static void helpDisposeChunk(const vector<SafeContextBase*>& chunkBufferElementPointers,const size_t& cardinality);
 
 		/// <summary>
 		///		static
@@ -420,7 +410,7 @@ namespace Safe
 		SafeMemoryManager::Classification.store(classification);
 	};
 
-	void SafeContextBase::SafeMemoryManager::helpInitializeChunk(vector<SafeContextBase*>& chunkBufferElementPointers,const size_t& cardinality,const vector<const void*>& constantPointerMasks,const vector<void*>& variablePointerMasks,const DefaultConstructionInvoker& constructionInvoker)
+	void SafeContextBase::SafeMemoryManager::helpInitializeChunk(vector<SafeContextBase*>& chunkBufferElementPointers,const size_t& cardinality,const DefaultConstructionInvoker& constructionInvoker)
 	{
 		lock_guard<recursive_mutex> classificationLock(ClassificationGuard);
 		SafeMemoryManager::Classification.store(false);
@@ -434,7 +424,7 @@ namespace Safe
 		SafeMemoryManager::Classification.store(true);
 	};
 
-	void SafeContextBase::SafeMemoryManager::helpDuplicateChunk(vector<SafeContextBase*>& chunkBufferElementPointers,const vector<SafeContextBase*>& sourceElementPointers,const size_t& cardinality,const vector<const void*>& constantPointerMasks,const vector<void*>& variablePointerMasks,const CopyConstructionInvoker& constructionInvoker)
+	void SafeContextBase::SafeMemoryManager::helpDuplicateChunk(vector<SafeContextBase*>& chunkBufferElementPointers,const vector<SafeContextBase*>& sourceElementPointers,const size_t& cardinality,const CopyConstructionInvoker& constructionInvoker)
 	{
 		lock_guard<recursive_mutex> classificationLock(ClassificationGuard);
 		SafeMemoryManager::Classification.store(false);
@@ -448,7 +438,7 @@ namespace Safe
 		SafeMemoryManager::Classification.store(true);
 	};
 
-	void SafeContextBase::SafeMemoryManager::helpDestroyChunk(const vector<SafeContextBase*>& chunkBufferElementPointers,const size_t& cardinality,vector<const void*>& constantPointerMasks,vector<void*>& variablePointerMasks)
+	void SafeContextBase::SafeMemoryManager::helpDestroyChunk(const vector<SafeContextBase*>& chunkBufferElementPointers,const size_t& cardinality)
 	{
 		lock_guard<recursive_mutex> classificationLock(ClassificationGuard);
 		size_t i = 0;
@@ -456,12 +446,10 @@ namespace Safe
 		for (i = 0;i < cardinality;i++)
 		{
 			(chunkBufferElementPointers[i])->~SafeContextBase();
-			constantPointerMasks[i] = nullptr;
-			variablePointerMasks[i] = nullptr;
 		}
 	};
 
-	void SafeContextBase::SafeMemoryManager::helpDisposeChunk(const vector<SafeContextBase*>& chunkBufferElementPointers,const size_t& cardinality,vector<const void*>& constantPointerMasks,vector<void*>& variablePointerMasks,const void* const constantProxyInstancePointer,void* const variableProxyInstancePointer)
+	void SafeContextBase::SafeMemoryManager::helpDisposeChunk(const vector<SafeContextBase*>& chunkBufferElementPointers,const size_t& cardinality)
 	{
 		lock_guard<recursive_mutex> classificationLock(ClassificationGuard);
 		SafeMemoryManager::Classification.store(false);
@@ -470,8 +458,6 @@ namespace Safe
 		for (i = 0;i < cardinality;i++)
 		{
 			(chunkBufferElementPointers[i])->~SafeContextBase();
-			constantPointerMasks[i] = static_cast<const void*>(constantProxyInstancePointer);
-			variablePointerMasks[i] = static_cast<void*>(variableProxyInstancePointer);
 		}
 
 		SafeMemoryManager::Classification.store(true);
@@ -843,24 +829,24 @@ namespace Safe
 		SafeMemoryManager::reconstructSafely(instancePointer,constructionInvoker);
 	};
 
-	void SafeContextBase::helpInitializeChunk(vector<SafeContextBase*>& chunkBufferElementPointers,const size_t& cardinality,const vector<const void*>& constantPointerMasks,const vector<void*>& variablePointerMasks,const DefaultConstructionInvoker& constructionInvoker)
+	void SafeContextBase::helpInitializeChunk(vector<SafeContextBase*>& chunkBufferElementPointers,const size_t& cardinality,const DefaultConstructionInvoker& constructionInvoker)
 	{
-		SafeMemoryManager::helpInitializeChunk(chunkBufferElementPointers,cardinality,constantPointerMasks,variablePointerMasks,constructionInvoker);
+		SafeMemoryManager::helpInitializeChunk(chunkBufferElementPointers,cardinality,constructionInvoker);
 	};
 
-	void SafeContextBase::helpDuplicateChunk(std::vector<SafeContextBase*>& chunkBufferElementPointers,const std::vector<SafeContextBase*>& sourceElementPointers,const std::size_t& cardinality,const std::vector<const void*>& constantPointerMasks,const std::vector<void*>& variablePointerMasks,const CopyConstructionInvoker& constructionInvoker)
+	void SafeContextBase::helpDuplicateChunk(std::vector<SafeContextBase*>& chunkBufferElementPointers,const std::vector<SafeContextBase*>& sourceElementPointers,const std::size_t& cardinality,const CopyConstructionInvoker& constructionInvoker)
 	{
-		SafeMemoryManager::helpDuplicateChunk(chunkBufferElementPointers,sourceElementPointers,cardinality,constantPointerMasks,variablePointerMasks,constructionInvoker);
+		SafeMemoryManager::helpDuplicateChunk(chunkBufferElementPointers,sourceElementPointers,cardinality,constructionInvoker);
 	};
 
-	void SafeContextBase::destroyDerivedChunkOnMemoryHeap(const std::vector<SafeContextBase*>& chunkBufferElementPointers,const std::size_t& cardinality,std::vector<const void*>& constantPointerMasks,std::vector<void*>& variablePointerMasks)
+	void SafeContextBase::destroyDerivedChunkOnMemoryHeap(const std::vector<SafeContextBase*>& chunkBufferElementPointers,const std::size_t& cardinality)
 	{
-		SafeMemoryManager::helpDestroyChunk(chunkBufferElementPointers,cardinality,constantPointerMasks,variablePointerMasks);
+		SafeMemoryManager::helpDestroyChunk(chunkBufferElementPointers,cardinality);
 	};
 
-	void SafeContextBase::helpDisposeChunk(const vector<SafeContextBase*>& chunkBufferElementPointers,const size_t& cardinality,vector<const void*>& constantPointerMasks,vector<void*>& variablePointerMasks,const void* const constantProxyInstancePointer,void* const variableProxyInstancePointer)
+	void SafeContextBase::helpDisposeChunk(const vector<SafeContextBase*>& chunkBufferElementPointers,const size_t& cardinality)
 	{
-		SafeMemoryManager::helpDisposeChunk(chunkBufferElementPointers,cardinality,constantPointerMasks,variablePointerMasks,constantProxyInstancePointer,variableProxyInstancePointer);
+		SafeMemoryManager::helpDisposeChunk(chunkBufferElementPointers,cardinality);
 	};
 
 	SafeContextBase* SafeContextBase::upcycle(const type_info& typeInformation)

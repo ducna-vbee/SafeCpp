@@ -55,7 +55,7 @@ namespace Safe
 	{
 		this->composedData = static_cast<basic_string<GenericTypeOfCharacter>&&>(primitiveString);
 	};
-	template<typename GenericTypeOfCharacter> SafeString<GenericTypeOfCharacter>::SafeStringBuilder::SafeStringBuilder(SafeStringBuilder&& other) noexcept : SafeContextBase(static_cast<SafeContextBase&&>(other))
+	template<typename GenericTypeOfCharacter> SafeString<GenericTypeOfCharacter>::SafeStringBuilder::SafeStringBuilder(SafeStringBuilder&& other) noexcept(false) : SafeContextBase(static_cast<SafeContextBase&&>(other))
 	{
 		this->composedData = static_cast<basic_string<GenericTypeOfCharacter>&&>(other.composedData);
 	};
@@ -246,7 +246,7 @@ namespace Safe
 		return *this;
 	};
 
-	template<typename GenericTypeOfCharacter> SafeString<GenericTypeOfCharacter>& SafeString<GenericTypeOfCharacter>::operator=(SafeString<GenericTypeOfCharacter>&& other) noexcept
+	template<typename GenericTypeOfCharacter> SafeString<GenericTypeOfCharacter>& SafeString<GenericTypeOfCharacter>::operator=(SafeString<GenericTypeOfCharacter>&& other) noexcept(false)
 	{
 		if (this != &static_cast<const SafeString<GenericTypeOfCharacter>&>(other))
 		{

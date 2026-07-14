@@ -56,6 +56,25 @@ class SafeContextBase;
 Declared and defined in `SafeContextBase.h`. The common base class type for any instance managed by the `Safe` runtime library. Inherit from this type to opt into tracking, recycling and chunk features.
 
 
+##### Member Types
+
+- `DefaultConstructionInvoker`
+```c++
+public:
+	typedef void (*DefaultConstructionInvoker)(SafeContextBase* const instancePointer);
+```
+
+This functional pointer type acts as the function prototype for invoking the default constructor of any derivative of `SafeContextBase`.
+
+- `CopyConstructionInvoker`
+```c++
+public:
+	typedef void (*CopyConstructionInvoker)(SafeContextBase* const instancePointer,const SafeContextBase* const otherInstancePointer);
+```
+
+This functional pointer type acts as the function prototype for invoking the copy constructor of any derivative of `SafeContextBase`.
+
+
 ##### Methods
 
 - `SafeContextBase()`
@@ -160,7 +179,7 @@ public:
 	static SafeContextBase& constructInstanceOnMemoryHeap();
 ```
 	
-This privatized helper method allocates and constructs an instance of type `SafeContextBase` on memory heap.
+This helper method allocates and constructs an instance of type `SafeContextBase` on memory heap.
 
 - `allocateArrayOnMemoryHeap(const std::size_t& arraySize)`
 ```c++
@@ -168,7 +187,7 @@ public:
 	static SafeContextBase* allocateArrayOnMemoryHeap(const std::size_t& arraySize);
 ```
 	
-This privatized helper method allocates and constructs an array of instance(s) of type `SafeContextBase` on memory heap.
+This helper method allocates and constructs an array of instance(s) of type `SafeContextBase` on memory heap.
 
 - `allocateChunkOnMemoryHeap(const std::size_t& chunkCardinality)`
 ```c++
@@ -176,7 +195,7 @@ public:
 	static SafeContextBase* allocateChunkOnMemoryHeap(const std::size_t& chunkCardinality);
 ```
 	
-This privatized helper method allocates and constructs a memory chunk of instance(s) of type `SafeContextBase` on memory heap.
+This helper method allocates and constructs a memory chunk of instance(s) of type `SafeContextBase` on memory heap.
 
 - `destructInstanceOnMemoryHeap(SafeContextBase* const instancePointer)`
 ```c++
@@ -184,7 +203,7 @@ private:
 	static void destructInstanceOnMemoryHeap(SafeContextBase* const instancePointer) noexcept;
 ```
 
-This privatized helper method destructs and deallocates an instance of type `SafeContextBase` on memory heap.
+This helper method destructs and deallocates an instance of type `SafeContextBase` on memory heap.
 
 - `deallocateArrayOnMemoryHeap(SafeContextBase* const arrayPointer)`
 ```c++
@@ -192,7 +211,7 @@ private:
 	static void deallocateArrayOnMemoryHeap(SafeContextBase* const arrayPointer) noexcept;
 ```
 
-This privatized helper method destructs and deallocates an array of instance(s) of type `SafeContextBase` on memory heap.
+This helper method destructs and deallocates an array of instance(s) of type `SafeContextBase` on memory heap.
 
 - `deallocateChunkOnMemoryHeap(SafeContextBase* const chunkPointer)`
 ```c++
@@ -200,7 +219,7 @@ private:
 	static void deallocateChunkOnMemoryHeap(SafeContextBase* const chunkPointer) noexcept;
 ```
 
-This privatized helper method destructs and deallocates a memory chunk of instance(s) of type `SafeContextBase` on memory heap.
+This helper method destructs and deallocates a memory chunk of instance(s) of type `SafeContextBase` on memory heap.
 
 - `referToDefaultConstantInstance(const std::type_info& typeInformation)`
 ```c++
@@ -208,7 +227,7 @@ private:
 	static const SafeContextBase* referToDefaultConstantInstance(const std::type_info& typeInformation);
 ```
 	
-This privatized helper method refers to the default constant `SafeContextBase` instance that deduced from polymorphic type information provided by argument `typeInformation`.
+This helper method refers to the default constant `SafeContextBase` instance that deduced from polymorphic type information provided by argument `typeInformation`.
 
 - `supplementDefaultPolymorphicInstance(const SafeContextBase* defaultedInstancePointer)`
 ```c++
@@ -216,7 +235,7 @@ private:
 	static void supplementDefaultPolymorphicInstance(const SafeContextBase* defaultedInstancePointer);
 ```
 
-This privatized helper method supplements the default polymorphic `SafeContextBase` instance that deduced from polymorphic type information of argument `defaultedInstancePointer`.
+This helper method supplements the default polymorphic `SafeContextBase` instance that deduced from polymorphic type information of argument `defaultedInstancePointer`.
 
 - `supplementDefaultInstanceOfDerivedType()`
 ```c++
@@ -224,39 +243,47 @@ private:
 	template<typename GenericTypeOfSafeContextDerivative> static inline GenericTypeOfSafeContextDerivative* supplementDefaultInstanceOfDerivedType()
 ```
 
-This privatized template helper method supplements the default `GenericTypeOfSafeContextDerivative` instance that deduced from polymorphic type information and requires `GenericTypeOfSafeContextDerivative` to inherit from `SafeContextBase`.
+This template helper method supplements the default `GenericTypeOfSafeContextDerivative` instance that deduced from polymorphic type information and requires `GenericTypeOfSafeContextDerivative` to inherit from `SafeContextBase`.
 
-- `reconstructSafely(SafeContextBase* const instancePointer,const SafeConstructionInvoker& constructionInvoker)`
+- `reconstructSafely(SafeContextBase* const instancePointer,const DefaultConstructionInvoker& constructionInvoker)`
 ```c++
 private:
-	static void reconstructSafely(SafeContextBase* const instancePointer,const SafeConstructionInvoker& constructionInvoker);
+	static void reconstructSafely(SafeContextBase* const instancePointer,const DefaultConstructionInvoker& constructionInvoker);
 ````
 
-This privatized helper method reconstructs a polymorphic instance of type `SafeContextBase` on a pre-allocated memory address whose pointer is provided by argument `instancePointer`, using a default constructor provided by argument `constructionInvoker`.
+This helper method reconstructs a polymorphic instance of type `SafeContextBase` on a pre-allocated memory address whose pointer is provided by argument `instancePointer`, using a default constructor provided by argument `constructionInvoker`.
 
-- `helpInitializeChunk(std::vector<SafeContextBase*>& chunkBufferElementPointers,const std::size_t& cardinality,const std::vector<const void*>& constantMasks,const std::vector<void*>& variableMasks,const SafeConstructionInvoker& constructionInvoker)`
+- `helpInitializeChunk(std::vector<SafeContextBase*>& chunkBufferElementPointers,const std::size_t& cardinality,const DefaultConstructionInvoker& constructionInvoker)`
 ```c++
 private:
-	static void helpInitializeChunk(std::vector<SafeContextBase*>& chunkBufferElementPointers,const std::size_t& cardinality,const std::vector<const void*>& constantMasks,const std::vector<void*>& variableMasks,const SafeConstructionInvoker& constructionInvoker);
+	static void helpInitializeChunk(std::vector<SafeContextBase*>& chunkBufferElementPointers,const std::size_t& cardinality,const DefaultConstructionInvoker& constructionInvoker);
 ```
 
-This privatized helper method helps initializing a memory chunk of polymorphic instance(s).
+This helper method helps initialize a memory chunk of polymorphic instance(s).
 
-- `helpDisposeChunk(const std::vector<SafeContextBase*>& chunkBufferElementPointers,const std::size_t& cardinality,std::vector<const void*>& constantMasks,std::vector<void*>& variableMasks,const void* const constantProxyInstancePointer,void* const variableProxyInstancePointer)`
+- `helpDuplicateChunk(std::vector<SafeContextBase*>& chunkBufferElementPointers,const std::vector<SafeContextBase*>& sourceElementPointers,const std::size_t& cardinality,const CopyConstructionInvoker& constructionInvoker)`
 ```c++
 private:
-	static void helpDisposeChunk(const std::vector<SafeContextBase*>& chunkBufferElementPointers,const std::size_t& cardinality,std::vector<const void*>& constantMasks,std::vector<void*>& variableMasks,const void* const constantProxyInstancePointer,void* const variableProxyInstancePointer);
+	static void helpDuplicateChunk(std::vector<SafeContextBase*>& chunkBufferElementPointers,const std::vector<SafeContextBase*>& sourceElementPointers,const std::size_t& cardinality,const CopyConstructionInvoker& constructionInvoker);
 ```
 
-This privatized helper method helps disposing a memory chunk of polymorphic instance(s).
+This helper method helps duplicate a memory chunk of polymorphic instance(s).
 
-- `destroyDerivedChunkOnMemoryHeap(const std::vector<SafeContextBase*>& chunkBufferElementPointers,const std::size_t& cardinality,std::vector<const void*>& constantMasks,std::vector<void*>& variableMasks)`
+- `helpDisposeChunk(const std::vector<SafeContextBase*>& chunkBufferElementPointers,const std::size_t& cardinality)`
 ```c++
 private:
-	static void destroyDerivedChunkOnMemoryHeap(const std::vector<SafeContextBase*>& chunkBufferElementPointers,const std::size_t& cardinality,std::vector<const void*>& constantMasks,std::vector<void*>& variableMasks);
+	static void helpDisposeChunk(const std::vector<SafeContextBase*>& chunkBufferElementPointers,const std::size_t& cardinality);
 ```
 
-This privatized helper method destroys a memory chunk of polymorphic instance(s).
+This helper method helps dispose a memory chunk of polymorphic instance(s).
+
+- `destroyDerivedChunkOnMemoryHeap(const std::vector<SafeContextBase*>& chunkBufferElementPointers,const std::size_t& cardinality)`
+```c++
+private:
+	static void destroyDerivedChunkOnMemoryHeap(const std::vector<SafeContextBase*>& chunkBufferElementPointers,const std::size_t& cardinality);
+```
+
+This helper method destroys a memory chunk of polymorphic instance(s).
 
 - `upcycle(const std::type_info& typeInformation)`
 ```c++
@@ -264,7 +291,7 @@ private:
 	static SafeContextBase* upcycle(const std::type_info& typeInformation);
 ```
 	
-This privatized helper method upcycles a polymorphic instance of type `SafeContextBase`, deduced from polymorphic type information provided by argument `typeInformation`.
+This helper method upcycles a polymorphic instance of type `SafeContextBase`, deduced from polymorphic type information provided by argument `typeInformation`.
 
 - `finalize(SafeContextBase*& pointer)`
 ```c++
@@ -272,7 +299,7 @@ private:
 	static void finalize(SafeContextBase*& pointer) noexcept;
 ```
 
-This privatized helper method finalizes a pointer to an instance of type `SafeContextBase` by setting it to `nullptr`.
+This helper method finalizes a pointer to an instance of type `SafeContextBase` by setting it to `nullptr`.
 
 - `recycle(SafeContextBase& instanceReference)`
 ```c++
@@ -367,7 +394,7 @@ public:
 	inline constexpr explicit SafeMemoryChunk();
 ```
 
-Default constructor of type `SafeMemoryChunk`. It constructs an instance of type `SafeMemoryChunk`. Each instance of `SafeMemoryChunk` is a memory chunk that has 10 elements.
+Default constructor of type `SafeMemoryChunk`. It constructs a generic instance of type `SafeMemoryChunk`. Each instance of `SafeMemoryChunk` is a memory chunk that has 10 elements.
 
 - `SafeMemoryChunk(const std::size_t& cardinality)`
 ```c++
@@ -375,23 +402,23 @@ public:
 	inline explicit SafeMemoryChunk(const std::size_t& cardinality)
 ```
 
-Constructor of `SafeMemoryChunk`. It constructs an instance of type `SafeMemoryChunk`. Each instance of `SafeMemoryChunk` is a memory chunk that has a fixed cardinality provided by argument `cardinality`.
+Constructor of `SafeMemoryChunk`. It constructs a generic instance of type `SafeMemoryChunk`. Each instance of `SafeMemoryChunk` is a memory chunk that has a fixed cardinality provided by argument `cardinality`.
 
-- `SafeMemoryChunk(const SafeMemoryChunk&)`
+- `SafeMemoryChunk(const SafeMemoryChunk& other)`
 ```c++
-private:
-	inline SafeMemoryChunk(const SafeMemoryChunk&) = delete;
+public:
+	inline SafeMemoryChunk(const SafeMemoryChunk<GenericTypeOfSafeContextDerivative>& other);
 ```
 
-Copy constructor of `SafeMemoryChunk`. Copy semantics is disabled for `SafeMemoryChunk`.
+Copy constructor of `SafeMemoryChunk`. It constructs a generic instance of type `SafeMemoryChunk` from another one with the same generic type argument.
 
 - `SafeMemoryChunk(SafeMemoryChunk&&)`
 ```c++
 private:
-	inline SafeMemoryChunk(SafeMemoryChunk&&) = delete;
+	inline SafeMemoryChunk(SafeMemoryChunk<GenericTypeOfSafeContextDerivative>&& other) noexcept(false);
 ```
 
-Move constructor of `SafeMemoryChunk`. Move semantics is disabled for `SafeMemoryChunk`.
+Move constructor of `SafeMemoryChunk`. It constructs a generic instance of type `SafeMemoryChunk` from another one with the same generic type argument.
 
 - `~SafeMemoryChunk()`
 ```c++
@@ -399,29 +426,28 @@ public:
 	inline ~SafeMemoryChunk() noexcept(true) override;
 ```
 	
-Destructor of `SafeMemoryChunk`. It destructs the instance of type `SafeMemoryChunk`. This destructor will always throw an exception and eventually terminate the program if trying to invoke manually.
+Destructor of `SafeMemoryChunk`. It destructs a generic instance of type `SafeMemoryChunk`. This destructor will always throw an exception and eventually terminate the program if trying to invoke manually.
 
-- `operator=(const SafeMemoryChunk<GenericTypeOfSafeContextDerivative>&)`
+- `operator=(const SafeMemoryChunk<GenericTypeOfSafeContextDerivative>& other)`
 ```c++
 private:
-	inline SafeMemoryChunk<GenericTypeOfSafeContextDerivative>& operator=(const SafeMemoryChunk<GenericTypeOfSafeContextDerivative>&) = delete;
+	inline SafeMemoryChunk<GenericTypeOfSafeContextDerivative>& operator=(const SafeMemoryChunk<GenericTypeOfSafeContextDerivative>& other) = delete;
 ```
 
-Overload of `operator=`, the copy assignment operator. Copy semantics is disabled for `SafeMemoryChunk`.
+Overload of `operator=`, the copy assignment operator. The operator is disabled for `SafeMemoryChunk`.
 	
-- `operator=(SafeMemoryChunk<GenericTypeOfSafeContextDerivative>&&)`
+- `operator=(SafeMemoryChunk<GenericTypeOfSafeContextDerivative>&& other)`
 ```c++
 private:
-	inline SafeMemoryChunk<GenericTypeOfSafeContextDerivative>& operator=(SafeMemoryChunk<GenericTypeOfSafeContextDerivative>&&) = delete;
+	inline SafeMemoryChunk<GenericTypeOfSafeContextDerivative>& operator=(SafeMemoryChunk<GenericTypeOfSafeContextDerivative>&& other) = delete;
 ```
 
-Overload of `operator=`, the move assignment operator. Move semantics is disabled for `SafeMemoryChunk`.
+Overload of `operator=`, the move assignment operator. The operator is disabled for `SafeMemoryChunk`.
 
 - `operator[](const std::size_t& index)`
 ```c++
 public:
-	inline const GenericTypeOfSafeContextDerivative& operator[](const std::size_t& index) const;
-	inline GenericTypeOfSafeContextDerivative& operator[](const std::size_t& index);
+	inline GenericTypeOfSafeContextDerivative operator[](const std::size_t& index);
 ```
 
 Overloads of `operator[]`, the indexer operators. They refer to the element instance(s) of type `GenericTypeOfSafeContextDerivative` in the current chunk by index provided by arguments `index`.
@@ -432,7 +458,7 @@ public:
 	[[noreturn]] static inline void throwOutOfBoundException(const std::size_t& index,const std::size_t& cardinality) noexcept(false);
 ```
 
-This privatized method throws an exception related to out-of-bound errors and doesn't return.
+This method throws an exception related to out-of-bound errors and doesn't return.
 
 - `throwAccessViolationException(const std::size_t& index) noexcept(false)`
 ```c++
@@ -440,7 +466,7 @@ public:
 	[[noreturn]] static inline void throwAccessViolationException(const std::size_t& index) noexcept(false)
 ```
 
-This privatized method throws an exception related to access violation errors and doesn't return.
+This method throws an exception related to access violation errors and doesn't return.
 
 - `getCardinality()`
 ```c++
@@ -457,6 +483,22 @@ public:
 ```
 
 This method checks if the current instance of `SafeMemoryChunk` contains an element of type `GenericTypeOfSafeContextDerivative` specified by argument `element`.
+
+- `mutate(const std::size_t& index,const SafeMemoryChunkElementMutator& mutator)`
+```c++
+public:
+	inline void mutate(const std::size_t& index,const SafeMemoryChunkElementMutator& mutator);
+```
+
+This method acts as an alias for `mutateElementByIndex` that is capable of mutating chunk element(s) by index.
+
+- `mutateElementByIndex(const std::size_t& index,const SafeMemoryChunkElementMutator& mutator)`
+```c++
+public:
+	inline void mutateElementByIndex(const std::size_t& index,const SafeMemoryChunkElementMutator& mutator);
+```
+
+This method is capable of mutating chunk element(s) by index.
 
 - `dispose()`
 ```c++
@@ -482,6 +524,17 @@ template<typename GenericTypeOfReturn,typename ...GenericTypesOfArguments> class
 Declared and defined in `SafeFunction.h`. A functional class type that inherits `SafeContextBase` and wraps `std::function` under the safe context.
 
 
+##### Member Types
+
+- `SafeMemoryChunkElementMutator`
+```c++
+public:
+	typedef void (*SafeMemoryChunkElementMutator)(GenericTypeOfSafeContextDerivative* const instancePointer);
+```
+
+This functional pointer type acts as the function prototype for invoking the default constructor of any derivative of `SafeContextBase`.
+
+
 ##### Methods
 
 - `SafeFunction()`
@@ -490,7 +543,7 @@ public:
 	inline explicit SafeFunction();
 ```
 
-Default constructor of type `SafeFunction`. It constructs an instance of `SafeFunction`.
+Default constructor of type `SafeFunction`. It constructs a generic instance of `SafeFunction`.
 
 - `SafeFunction(const GenericTypeOfFunction& functionallyInvocable)`
 ```c++
@@ -498,7 +551,7 @@ public:
 	template<class GenericTypeOfFunction> inline SafeFunction(const GenericTypeOfFunction& functionallyInvocable);
 ```
 
-A specialized constructor of `SafeFunction`. It constructs an instance of `SafeFunction` from a functional argument `functionallyInvocable`.
+A specialized constructor of `SafeFunction`. It constructs a generic instance of `SafeFunction` from a functional argument `functionallyInvocable`.
 
 - `SafeFunction(const std::function<GenericTypeOfReturn(GenericTypesOfArguments...)>& function)`
 ```c++
@@ -506,7 +559,7 @@ public:
 	inline SafeFunction(const std::function<GenericTypeOfReturn(GenericTypesOfArguments...)>& function);
 ```
 
-A specialized constructor of `SafeFunction`. It constructs an instance of `SafeFunction` from a functional argument `function`.
+A specialized constructor of `SafeFunction`. It constructs a generic instance of `SafeFunction` from a functional argument `function`.
 
 - `SafeFunction(const SafeFunction<GenericTypeOfReturn(GenericTypesOfArguments...)>& other)`
 ```c++
@@ -514,7 +567,7 @@ public:
 	inline SafeFunction(const SafeFunction<GenericTypeOfReturn(GenericTypesOfArguments...)>& other);
 ```
 	
-Copy constructor of type `SafeFunction`. It constructs an instance of type `SafeFunction` from another one.
+Copy constructor of type `SafeFunction`. It constructs a generic instance of type `SafeFunction` from another one with the same generic type argument.
 
 - `SafeFunction(GenericTypeOfFunction&& functionallyInvocable)`
 ```c++
@@ -522,7 +575,7 @@ public:
 	template<class GenericTypeOfFunction> inline SafeFunction(GenericTypeOfFunction&& functionallyInvocable);
 ```
 
-A specialized move constructor of `SafeFunction`. It constructs an instance of `SafeFunction` from a functional argument `functionallyInvocable`.
+A specialized move constructor of `SafeFunction`. It constructs a generic instance of `SafeFunction` from a functional argument `functionallyInvocable`.
 
 - `SafeFunction(std::function<GenericTypeOfReturn(GenericTypesOfArguments...)>&& function)`
 ```c++
@@ -530,7 +583,7 @@ public:
 	inline SafeFunction(std::function<GenericTypeOfReturn(GenericTypesOfArguments...)>&& function);
 ```
 
-A specialized move constructor of `SafeFunction`. It constructs an instance of `SafeFunction` from a functional argument `function`.
+A specialized move constructor of `SafeFunction`. It constructs a generic instance of `SafeFunction` from a functional argument `function`.
 
 - `SafeFunction(SafeFunction&& other)`
 ```c++
@@ -538,7 +591,7 @@ public:
 	inline SafeFunction(SafeFunction<GenericTypeOfReturn(GenericTypesOfArguments...)>&& other) noexcept(false);
 ```
 
-Move constructor of type `SafeFunction`. It constructs an instance of type `SafeFunction` from another one.
+Move constructor of type `SafeFunction`. It constructs a generic instance of type `SafeFunction` from another one with the same generic type argument.
 
 - `~SafeFunction()`
 ```c++
@@ -546,7 +599,7 @@ protected:
 	inline virtual ~SafeFunction() noexcept(false) override
 ```
 
-Destructor of type `SafeFunction`. It destructs an instance of type `SafeFunction`. This destructor will always throw an exception and eventually terminate the program if trying to invoke manually.
+Destructor of type `SafeFunction`. It destructs a generic instance of type `SafeFunction`. This destructor will always throw an exception and eventually terminate the program if trying to invoke manually.
 
 - `operator=(const SafeFunction<GenericTypeOfReturn(GenericTypesOfArguments...)>& other)`
 ```c++
@@ -554,7 +607,7 @@ public:
 	inline SafeFunction<GenericTypeOfReturn(GenericTypesOfArguments...)>& operator=(const SafeFunction<GenericTypeOfReturn(GenericTypesOfArguments...)>& other);
 ```
 	
-Overload of `operator=`, the copy assignment operator. It performs copy assignment from an instance of type `SafeFunction` to another one.
+Overload of `operator=`, the copy assignment operator. It performs copy assignment from a generic instance of type `SafeFunction` to another one.
 	
 - `operator=(SafeFunction<GenericTypeOfReturn(GenericTypesOfArguments...)>&& other)`
 ```c++
@@ -562,7 +615,7 @@ public:
 	inline SafeFunction<GenericTypeOfReturn(GenericTypesOfArguments...)>& operator=(SafeFunction<GenericTypeOfReturn(GenericTypesOfArguments...)>&& other) noexcept(false);
 ```
 	
-Overload of `operator=`, the move assignment operator. It performs move assignment from an instance of type `SafeFunction` to another one.
+Overload of `operator=`, the move assignment operator. It performs move assignment from a generic instance of type `SafeFunction` to another one.
 
 - `operator()(GenericTypesOfArguments... arguments)`
 ```c++
@@ -773,8 +826,12 @@ Declared and defined in `SafeEvent.h`. An event handler class that inherits `Saf
 ##### Member Types
 
 - `SafeEventHandle`
+```c++
+public:
+	typedef SafeFunction<void()> SafeEventOccurrence;
+```
 
-	An alias for `SafeFunction<void(const GenericTypeOfSafeEvent&)>`. It acts like an event-driven handling functional type.
+This functional type acts like an event-driven handler.
 
 
 ##### Methods
@@ -785,7 +842,7 @@ public:
 	inline explicit SafeEventHandler();
 ```
 
-Default constructor of type `SafeEventHandler`. It constructs an instance of `SafeEventHandler`.
+Default constructor of type `SafeEventHandler`. It constructs a generic instance of `SafeEventHandler`.
 
 - `SafeEventHandler(const std::function<void(const GenericTypeOfSafeEvent&)>& eventHandle)`
 ```c++
@@ -793,7 +850,7 @@ public:
 	inline explicit SafeEventHandler(const std::function<void(const GenericTypeOfSafeEvent&)>& eventHandle);
 ```
 
-A specialized constructor of `SafeEventHandler`. It constructs an instance of `SafeEventHandler` from argument `eventHandle`.
+A specialized constructor of `SafeEventHandler`. It constructs a generic instance of `SafeEventHandler` from argument `eventHandle`.
 
 - `SafeEventHandler(const SafeEventHandler<GenericTypeOfSafeEvent>& other)`
 ```c++
@@ -801,7 +858,7 @@ public:
 	inline SafeEventHandler(const SafeEventHandler<GenericTypeOfSafeEvent>& other) noexcept(false);
 ```
 	
-Copy constructor of type `SafeEventHandler`. It constructs an instance of type `SafeEventHandler` from another one.
+Copy constructor of type `SafeEventHandler`. It constructs a generic instance of type `SafeEventHandler` from another one.
 
 - `SafeEventHandler(std::function<void(const GenericTypeOfSafeEvent&)>&& eventHandle)`
 ```c++
@@ -809,7 +866,7 @@ public:
 	inline explicit SafeEventHandler(std::function<void(const GenericTypeOfSafeEvent&)>&& eventHandle);
 ```
 
-A specialized move constructor of `SafeEventHandler`. It constructs an instance of `SafeEventHandler` from argument `eventHandle`.
+A specialized move constructor of `SafeEventHandler`. It constructs a generic instance of `SafeEventHandler` from argument `eventHandle`.
 
 - `SafeEventHandler(SafeEventHandler<GenericTypeOfSafeEvent>&& other)`
 ```c++
@@ -817,7 +874,7 @@ public:
 	inline SafeEventHandler(SafeEventHandler<GenericTypeOfSafeEvent>&& other) noexcept(false);
 ```
 
-Move constructor of type `SafeEventHandler`. It constructs an instance of type `SafeEventHandler` from another one.
+Move constructor of type `SafeEventHandler`. It constructs a generic instance of type `SafeEventHandler` from another one.
 
 - `~SafeEventHandler()`
 ```c++
@@ -825,7 +882,7 @@ protected:
 	inline virtual ~SafeEventHandler() noexcept(false) override;
 ```
 
-Destructor of type `SafeEventHandler`. It destructs an instance of type `SafeEventHandler`. This destructor will always throw an exception and eventually terminate the program if trying to invoke manually.
+Destructor of type `SafeEventHandler`. It destructs a generic instance of type `SafeEventHandler`. This destructor will always throw an exception and eventually terminate the program if trying to invoke manually.
 
 - `operator=(const SafeEventHandler& other)`
 ```c++
@@ -833,7 +890,7 @@ public:
 	inline SafeEventHandler<GenericTypeOfSafeEvent>& operator=(const SafeEventHandler<GenericTypeOfSafeEvent>& other);
 ```
 	
-Overload of `operator=`, the copy assignment operator. It performs copy assignment from an instance of type `SafeEventHandler` to another one.
+Overload of `operator=`, the copy assignment operator. It performs copy assignment from a generic instance of type `SafeEventHandler` to another one.
 	
 - `operator=(SafeEventHandler&& other)`
 ```c++
@@ -841,7 +898,7 @@ public:
 	inline SafeEventHandler<GenericTypeOfSafeEvent>& operator=(SafeEventHandler<GenericTypeOfSafeEvent>&& other) noexcept(false);
 ```
 	
-Overload of `operator=`, the move assignment operator. It performs move assignment from an instance of type `SafeEventHandler` to another one.
+Overload of `operator=`, the move assignment operator. It performs move assignment from a generic instance of type `SafeEventHandler` to another one.
 
 - `handle(const GenericTypeOfSafeEvent& event)`
 ```c++
@@ -887,7 +944,7 @@ public:
 	explicit SafeString();
 ```
 
-Default constructor of `SafeString`. It constructs an instance of type `SafeString`.
+Default constructor of `SafeString`. It constructs a generic instance of type `SafeString`.
 
 
 - `SafeString(const GenericTypeOfCharacter* const characterPointer)`
@@ -896,7 +953,7 @@ public:
 	SafeString(const GenericTypeOfCharacter* const characterPointer);
 ```
 
-Constructor of `SafeString`. It constructs an instance of type `SafeString` from a character pointer of type `const GenericTypeOfCharacter* const`.
+Constructor of `SafeString`. It constructs a generic instance of type `SafeString` from a character pointer of type `const GenericTypeOfCharacter* const`.
 
 - `SafeString(const GenericTypeOfCharacter* const characterPointer,const std::size_t& length)`
 ```c++
@@ -904,7 +961,7 @@ public:
 	SafeString(const GenericTypeOfCharacter* const characterPointer,const std::size_t& length);
 ```
 
-Constructor of `SafeString`. It constructs an instance of type `SafeString` from a character pointer of type `const GenericTypeOfCharacter* const` and a specified length that is the length of the underlying character sequence.
+Constructor of `SafeString`. It constructs a generic instance of type `SafeString` from a character pointer of type `const GenericTypeOfCharacter* const` and a specified length that is the length of the underlying character sequence.
 
 - `SafeString(const std::basic_string<GenericTypeOfCharacter>& primitiveString)`
 ```c++
@@ -912,7 +969,7 @@ public:
 	SafeString(const std::basic_string<GenericTypeOfCharacter>& primitiveString);
 ```
 
-Constructor of `SafeString`. It constructs an instance of type `SafeString` from a primitive string instance of type `std::basic_string`.
+Constructor of `SafeString`. It constructs a generic instance of type `SafeString` from a primitive string instance of type `std::basic_string`.
 
 - `SafeString(const SafeString<GenericTypeOfCharacter>& other)`
 ```c++
@@ -920,7 +977,7 @@ public:
 	SafeString(const SafeString<GenericTypeOfCharacter>& other);
 ```
 
-Copy constructor of type `SafeString`. It constructs an instance of type `SafeString` from another one.
+Copy constructor of type `SafeString`. It constructs a generic instance of type `SafeString` from another one.
 
 - `SafeString(std::basic_string<GenericTypeOfCharacter>&& primitiveString)`
 ```c++
@@ -928,15 +985,15 @@ public:
 	SafeString(std::basic_string<GenericTypeOfCharacter>&& primitiveString);
 ```
 
-Move constructor of `SafeString`. It constructs an instance of type `SafeString` from a primitive string instance of type `std::basic_string`.
+Move constructor of `SafeString`. It constructs a generic instance of type `SafeString` from a primitive string instance of type `std::basic_string`.
 
 - `SafeString(SafeString<GenericTypeOfCharacter>&& other)`
 ```c++
 public:
-	SafeString(SafeString<GenericTypeOfCharacter>&& other) noexcept;
+	SafeString(SafeString<GenericTypeOfCharacter>&& other) noexcept(false);
 ```
 
-Move constructor of type `SafeString`. It constructs an instance of type `SafeString` from another one.
+Move constructor of type `SafeString`. It constructs a generic instance of type `SafeString` from another one.
 
 - `~SafeString()`
 ```c++
@@ -944,7 +1001,7 @@ public:
 	virtual ~SafeString() noexcept(false);
 ```
 
-Destructor of type `SafeString`. It destructs an instance of type `SafeString`. This destructor will always throw an exception and eventually terminate the program if trying to invoke manually.
+Destructor of type `SafeString`. It destructs a generic instance of type `SafeString`. This destructor will always throw an exception and eventually terminate the program if trying to invoke manually.
 
 - `operator=(const SafeString<GenericTypeOfCharacter>& other)`
 ```c++
@@ -952,15 +1009,15 @@ public:
 	SafeString<GenericTypeOfCharacter>& operator=(const SafeString<GenericTypeOfCharacter>& other);
 ```
 
-Overload of `operator=`, the copy assignment operator. It performs copy assignment from an instance of type `SafeString` to another one.
+Overload of `operator=`, the copy assignment operator. It performs copy assignment from a generic instance of type `SafeString` to another one.
 
-- `operator=(SafeString<GenericTypeOfCharacter>&& other)`
+- `operator=(SafeString<GenericTypeOfCharacter>&& other) noexcept(false)`
 ```c++
 public:
-	SafeString<GenericTypeOfCharacter>& operator=(SafeString<GenericTypeOfCharacter>&& other);
+	SafeString<GenericTypeOfCharacter>& operator=(SafeString<GenericTypeOfCharacter>&& other) noexcept(false);
 ```
 
-Overload of `operator=`, the move assignment operator. It performs move assignment from an instance of type `SafeString` to another one.
+Overload of `operator=`, the move assignment operator. It performs move assignment from a generic instance of type `SafeString` to another one.
 
 - `operator==(const std::basic_string<GenericTypeOfCharacter>& data)`
 ```c++
@@ -992,7 +1049,7 @@ public:
 	SafeString<GenericTypeOfCharacter>& operator+(const SafeString<GenericTypeOfCharacter>& other);
 ```
 
-Overload of `operator+`, the addition operator. It produces an instance of `SafeString` from the addition operation by concatenating another instance of `SafeString` to the current instance.
+Overload of `operator+`, the addition operator. It produces a generic instance of `SafeString` from the addition operation by concatenating another instance of `SafeString` to the current instance.
 
 - `operator-(const SafeString<GenericTypeOfCharacter>& other)`
 ```c++
@@ -1000,7 +1057,7 @@ public:
 	SafeString<GenericTypeOfCharacter>& operator-(const SafeString<GenericTypeOfCharacter>& other);
 ```
 
-Overload of `operator-`, the subtraction operator. It produces an instance of `SafeString` from the addition operation by removing another instance of `SafeString` from the current instance.
+Overload of `operator-`, the subtraction operator. It produces a generic instance of `SafeString` from the addition operation by removing another instance of `SafeString` from the current instance.
 
 - `operator[](const std::size_t& index)`
 ```c++
@@ -1040,7 +1097,7 @@ public:
 	bool compareSubstring(const size_t& startingIndex,const size_t& length,const std::basic_string<GenericTypeOfCharacter>& data) const;
 ```
 
-This method compares a sub-string of the current instance of `SafeString` defined by arguments `startingIndex` and `length`, to an instance of `std::basic_string` specified by argument `data`.
+This method compares a sub-string of the current instance of `SafeString` defined by arguments `startingIndex` and `length`, to a generic instance of `std::basic_string` specified by argument `data`.
 
 - `compareSubstring(const std::size_t& startingIndex,const std::size_t& length,const std::basic_string_view<GenericTypeOfCharacter>& dataView)`
 ```c++
@@ -1048,7 +1105,7 @@ public:
 	bool compareSubstring(const std::size_t& startingIndex,const std::size_t& length,const std::basic_string_view<GenericTypeOfCharacter>& dataView) const;
 ```
 
-This method compares a sub-string of the current instance of `SafeString` defined by arguments `startingIndex` and `length`, to an instance of `std::basic_string_view` specified by argument `dataView`.
+This method compares a sub-string of the current instance of `SafeString` defined by arguments `startingIndex` and `length`, to a generic instance of `std::basic_string_view` specified by argument `dataView`.
 
 - `compareSubstring(const std::size_t& startingIndex,const std::size_t& length,const SafeString<GenericTypeOfCharacter>& other)`
 ```c++
@@ -1104,7 +1161,7 @@ public:
 	std::basic_string<GenericTypeOfCharacter> obtainPrimitiveString() const;
 ```
 
-This method converts the current instance of `SafeString` to an instance of primitive string type `std::basic_string`.
+This method converts the current instance of `SafeString` to a generic instance of primitive string type `std::basic_string`.
 
 - `obtainPrimitiveStringView()`
 ```c++
@@ -1112,7 +1169,7 @@ public:
 	std::basic_string_view<GenericTypeOfCharacter> obtainPrimitiveStringView() const noexcept;
 ```
 
-This method returns a view to the current instance of `SafeString` by an instance of primitive string view type `std::basic_string_view`.
+This method returns a view to the current instance of `SafeString` by a generic instance of primitive string view type `std::basic_string_view`.
 
 
 #### <a name="safestringbuilder"></a> SafeStringBuilder
@@ -1168,7 +1225,7 @@ Move constructor of `SafeStringBuilder`. It constructs an instance of type `Safe
 - `SafeStringBuilder(SafeStringBuilder&& other)`
 ```c++
 public:
-	SafeStringBuilder(SafeStringBuilder&& other) noexcept;
+	SafeStringBuilder(SafeStringBuilder&& other) noexcept(false);
 ```
 
 Move constructor of type `SafeStringBuilder`. It constructs an instance of type `SafeStringBuilder` from another one.
@@ -1192,7 +1249,7 @@ Overload of `operator=`, the copy assignment operator. It performs copy assignme
 - `operator=(SafeStringBuilder&& other)`
 ```c++
 public:
-	SafeStringBuilder& operator=(SafeStringBuilder&& other) noexcept;
+	SafeStringBuilder& operator=(SafeStringBuilder&& other) noexcept(false);
 ```
 
 Overload of `operator=`, the move assignment operator. It performs move assignment from an instance of type `SafeStringBuilder` to another one.
